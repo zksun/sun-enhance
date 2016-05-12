@@ -16,7 +16,7 @@
 
 
     <properties>
-        <sun-enhance-version>1.0.1-snapshot</sun-enhance-version>
+        <sun-enhance-version>${project.version}</sun-enhance-version>
         <project.encoding>UTF-8</project.encoding>
         <java.version>1.8</java.version>
     </properties>

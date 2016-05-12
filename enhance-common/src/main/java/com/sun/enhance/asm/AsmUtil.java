@@ -1,7 +1,11 @@
 package com.sun.enhance.asm;
 
+import com.sun.enhance.logging.Logger;
+import com.sun.enhance.logging.LoggerFactory;
+import com.sun.enhance.util.CollectionUtils;
 import org.objectweb.asm.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +13,8 @@ import java.util.List;
  * Created by zksun on 5/11/16.
  */
 public final class AsmUtil {
+
+    private static final Logger logger = LoggerFactory.getLogger(AsmUtil.class);
 
     final static String CLINIT = "<clinit>";
     final static String INIT = "<init>";
@@ -27,6 +33,46 @@ public final class AsmUtil {
         return Type.getMethodDescriptor(Type.VOID_TYPE, new Type[]{});
     }
 
+    static ClassWriter createClassByBaseClass(String className) throws IOException {
+        ClassReader classReader = new ClassReader(className);
+        ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+        classReader.accept(classWriter, ClassReader.SKIP_DEBUG);
+        return classWriter;
+    }
+
+    static void executeMethodAdapter(ClassAdapter adapter, Class<?> cls) {
+        if (null == adapter) {
+            throw new NullPointerException("adapter");
+        }
+        if (null == cls) {
+            throw new NullPointerException("cls");
+        }
+
+        try {
+            ClassReader cr = new ClassReader(cls.getCanonicalName());
+            cr.accept(adapter, ClassReader.SKIP_DEBUG);
+        } catch (Throwable throwable) {
+            logger.error("get classWriter class object failure for class: {}", cls.getName(), throwable);
+        }
+
+    }
+
+
+    public static Mezhod[] getClassMethods(Class<?> cls) {
+        if (null == cls) {
+            throw new NullPointerException("cls");
+        }
+        try {
+            ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+            MezhodAdapter classAdapter = new MezhodAdapter(classWriter);
+            executeMethodAdapter(classAdapter, cls);
+            return classAdapter.getMezhods();
+        } catch (Throwable throwable) {
+            logger.error("execute classAdapter class object failure for class: {}", cls.getName(), throwable);
+        }
+
+        return null;
+    }
 
     private static class MezhodAdapter extends ClassAdapter {
 
@@ -44,8 +90,21 @@ public final class AsmUtil {
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             List<Mezhod> mezhodList = new ArrayList<Mezhod>();
+            System.out.println(access);
+            System.out.println(name);
+            System.out.println(desc);
+            System.out.println(signature);
+            System.out.println(exceptions);
+
+            if (CollectionUtils.isNotEmpty(mezhodList)) {
+                this.mezhods = (Mezhod[]) mezhodList.toArray();
+            }
 
             return super.visitMethod(access, name, desc, signature, exceptions);
+        }
+
+        public Mezhod[] getMezhods() {
+            return mezhods;
         }
     }
 }
