@@ -23,10 +23,32 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- ================================================= -->
-            <!-- 日志及相关依赖（用slf4j+logback代替jcl+log4j-->
-            <!-- ================================================= -->
 
+            <!-- ================================================= -->
+            <!-- enhance  项目子模块                                -->
+            <!-- ================================================= -->
+            <dependency>
+                <groupId>sun-enhance</groupId>
+                <artifactId>enhance-core</artifactId>
+                <version>${sun-enhance-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>sun-enhance</groupId>
+                <artifactId>enhance-common</artifactId>
+                <version>${sun-enhance-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>sun-enhance</groupId>
+                <artifactId>enhance-kernel</artifactId>
+                <version>${sun-enhance-version}</version>
+            </dependency>
+
+
+            <!-- ================================================= -->
+            <!-- 日志及相关依赖（用slf4j+logback代替jcl+log4j         -->
+            <!-- ================================================= -->
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
@@ -60,7 +82,6 @@
             <!-- ================================================= -->
             <!-- junit 单元测试模块                                 -->
             <!-- ================================================= -->
-
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
