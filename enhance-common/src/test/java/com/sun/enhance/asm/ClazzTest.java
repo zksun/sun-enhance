@@ -13,8 +13,6 @@ public class ClazzTest {
             Class<?> aClass = Class.forName(TestClazz.class.getCanonicalName());
             Method[] methods = aClass.getDeclaredMethods();
 
-
-
             System.out.println("end");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();

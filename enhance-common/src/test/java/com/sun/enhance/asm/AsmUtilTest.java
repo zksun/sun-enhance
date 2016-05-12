@@ -18,4 +18,10 @@ public class AsmUtilTest {
         Mezhod[] classMethods = AsmUtil.getClassMethods(TestClazz.class);
         Assert.assertTrue(null != classMethods);
     }
+
+    @Test
+    public void getFieldsTest() {
+        Feeld[] classFields = AsmUtil.getClassFeelds(TestClazz.class);
+        Assert.assertTrue(null != classFields);
+    }
 }

@@ -1,5 +1,7 @@
 package com.sun.enhance.doamin;
 
+import com.sun.enhance.annotation.Enhance;
+
 import java.io.IOException;
 
 /**
@@ -9,7 +11,7 @@ public class TestClazz {
     private Integer intValue;
 
     private Boolean booleanValue;
-
+    @Enhance(value = "world")
     private String stringValue;
 
     private Long longValue;

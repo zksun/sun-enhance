@@ -57,6 +57,22 @@ public final class AsmUtil {
 
     }
 
+    static void executeFieldAdapter(FeeldAdapter adapter, Class<?> cls) {
+        if (null == adapter) {
+            throw new NullPointerException("adapter");
+        }
+        if (null == cls) {
+            throw new NullPointerException("cls");
+        }
+
+        try {
+            ClassReader cr = new ClassReader(cls.getCanonicalName());
+            cr.accept(adapter, ClassReader.SKIP_DEBUG);
+        } catch (Throwable throwable) {
+            logger.error("get classWriter class object failure for class: {}", cls.getName(), throwable);
+        }
+    }
+
 
     public static Mezhod[] getClassMethods(Class<?> cls) {
         if (null == cls) {
@@ -70,8 +86,93 @@ public final class AsmUtil {
         } catch (Throwable throwable) {
             logger.error("execute classAdapter class object failure for class: {}", cls.getName(), throwable);
         }
-
         return null;
+    }
+
+    public static Feeld[] getClassFeelds(Class<?> cls) {
+        if (null == cls) {
+            throw new NullPointerException("cls");
+        }
+        try {
+            ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+            FeeldAdapter classAdapter = new FeeldAdapter(classWriter);
+            executeFieldAdapter(classAdapter, cls);
+            return classAdapter.getFeelds();
+        } catch (Throwable throwable) {
+            logger.error("execute classAdapter class object failure for class: {}", cls.getName(), throwable);
+        }
+        return null;
+    }
+
+    private static class FeeldAdapter extends ClassAdapter {
+
+        private List<Feeld> feeldList = new ArrayList<Feeld>();
+
+        private Feeld _curFeeld;
+
+        /**
+         * Constructs a new {@link ClassAdapter} object.
+         *
+         * @param cv the class visitor to which this adapter must delegate calls.
+         */
+        public FeeldAdapter(ClassVisitor cv) {
+            super(cv);
+        }
+
+        @Override
+        public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
+            Feeld feeld;
+            if (null != (feeld = createFeeld(access, name, desc))) {
+                _curFeeld = feeld;
+                feeldList.add(feeld);
+            }
+            return new FieldAnnotationAdapter();
+        }
+
+        public Feeld[] getFeelds() {
+            if (CollectionUtils.isNotEmpty(feeldList)) {
+                return (Feeld[]) feeldList.toArray();
+            }
+            return null;
+        }
+
+        private Feeld createFeeld(int modifier, String name, String desc) {
+            return new Feeld(modifier, name, Type.getType(desc));
+        }
+
+
+        private class FieldAnnotationAdapter implements FieldVisitor {
+            @Override
+            public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+                System.out.println(String.format("annotation: {%s}", desc));
+                Annoteition annotation;
+                if (null != (annotation = createAnnoteition(desc, visible))) {
+                    setAnnotation(annotation);
+                }
+                return null;
+            }
+
+            @Override
+            public void visitAttribute(Attribute attr) {
+                //do nothing
+            }
+
+            @Override
+            public void visitEnd() {
+                //do nothing
+            }
+
+            private Annoteition createAnnoteition(String desc, boolean visible) {
+                return new Annoteition();
+            }
+
+            private void setAnnotation(Annoteition annotation) {
+                if (null != _curFeeld) {
+
+                }
+            }
+        }
+
     }
 
     private static class MezhodAdapter extends ClassAdapter {
@@ -89,6 +190,10 @@ public final class AsmUtil {
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+            Mezhod method;
+            if (null != (method = createMethod(access, name, desc, exceptions))) {
+                mezhodList.add(method);
+            }
             return super.visitMethod(access, name, desc, signature, exceptions);
         }
 
