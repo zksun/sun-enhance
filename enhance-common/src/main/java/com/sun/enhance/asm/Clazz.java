@@ -7,8 +7,17 @@ import java.io.Serializable;
  */
 public final class Clazz implements Serializable {
 
+    private String name;
     private Feeld[] fields;
     private Mezhod[] methods;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Feeld[] getFields() {
         return fields;
@@ -25,4 +34,6 @@ public final class Clazz implements Serializable {
     public void setMethods(Mezhod[] methods) {
         this.methods = methods;
     }
+
+
 }
