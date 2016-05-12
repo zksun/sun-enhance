@@ -3,6 +3,7 @@ package com.sun.enhance.asm;
 import com.sun.enhance.logging.Logger;
 import com.sun.enhance.logging.LoggerFactory;
 import com.sun.enhance.util.CollectionUtils;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import org.objectweb.asm.*;
 
 import java.io.IOException;
@@ -76,7 +77,7 @@ public final class AsmUtil {
 
     private static class MezhodAdapter extends ClassAdapter {
 
-        private Mezhod[] mezhods;
+        private List<Mezhod> mezhodList = new ArrayList<Mezhod>();
 
         /**
          * Constructs a new {@link ClassAdapter} object.
@@ -89,22 +90,30 @@ public final class AsmUtil {
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-            List<Mezhod> mezhodList = new ArrayList<Mezhod>();
-            System.out.println(access);
-            System.out.println(name);
-            System.out.println(desc);
-            System.out.println(signature);
-            System.out.println(exceptions);
-
-            if (CollectionUtils.isNotEmpty(mezhodList)) {
-                this.mezhods = (Mezhod[]) mezhodList.toArray();
-            }
-
             return super.visitMethod(access, name, desc, signature, exceptions);
         }
 
+        private Mezhod createMethod(int access, String name, String desc, String[] exceptions) {
+            return new Mezhod(access, name, Type.getReturnType(desc), Type.getArgumentTypes(desc), getExceptions(exceptions));
+        }
+
+        private Type[] getExceptions(String[] exceptions) {
+            if (null == exceptions || exceptions.length < 1) {
+                return null;
+            }
+            Type[] result = new Type[exceptions.length];
+
+            for (int i = 0; i < exceptions.length; i++) {
+                result[i] = Type.getObjectType(exceptions[i].trim());
+            }
+            return result;
+        }
+
         public Mezhod[] getMezhods() {
-            return mezhods;
+            if (CollectionUtils.isNotEmpty(mezhodList)) {
+                return (Mezhod[]) mezhodList.toArray();
+            }
+            return null;
         }
     }
 }

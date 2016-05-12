@@ -1,5 +1,7 @@
 package com.sun.enhance.doamin;
 
+import java.io.IOException;
+
 /**
  * Created by zksun on 5/11/16.
  */
@@ -73,5 +75,9 @@ public class TestClazz {
 
     public void setShortValue(Short shortValue) {
         this.shortValue = shortValue;
+    }
+
+    public void testMethod(String arg) throws IOException {
+
     }
 }
