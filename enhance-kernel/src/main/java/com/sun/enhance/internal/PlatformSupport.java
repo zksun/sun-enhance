@@ -27,15 +27,17 @@ public final class PlatformSupport {
         }
     }
 
-    public static boolean hashUnsafe(){
+    public static boolean hasUnsafe() {
         return HAS_UNSAFE;
     }
 
     private static <E extends Throwable> void doThrowException(Throwable t) throws E {
-        throw (E) t;
+        if (hasUnsafe()) {
+            PlatformSupportInner.throwException(t);
+        } else {
+            PlatformSupport.<RuntimeException>doThrowException(t);
+        }
     }
-
-
 
 
 }
