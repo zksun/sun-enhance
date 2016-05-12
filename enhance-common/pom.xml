@@ -11,5 +11,12 @@
 
     <artifactId>enhance-common</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>sun-enhance</groupId>
+            <artifactId>enhance-kernel</artifactId>
+        </dependency>
+    </dependencies>
+
 
 </project>
