@@ -3,7 +3,6 @@ package com.sun.enhance.asm;
 import com.sun.enhance.logging.Logger;
 import com.sun.enhance.logging.LoggerFactory;
 import com.sun.enhance.util.CollectionUtils;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 import org.objectweb.asm.*;
 
 import java.io.IOException;
