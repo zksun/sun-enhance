@@ -2,7 +2,9 @@ package com.sun.enhance.io;
 
 import com.sun.enhance.logging.Logger;
 import com.sun.enhance.logging.LoggerFactory;
-import com.sun.org.apache.bcel.internal.util.ClassLoader;
+import com.sun.enhance.scan.AntPathMatcher;
+import com.sun.enhance.scan.PathMatcher;
+import com.sun.enhance.util.Assert;
 
 import java.io.IOException;
 
@@ -13,7 +15,32 @@ public class PathMatchingResourcePatternResolver implements ResourcePatternResol
 
     private static final Logger logger = LoggerFactory.getLogger(PathMatchingResourcePatternResolver.class);
 
-   // private final ResourceLoader resourceLoader;
+    private final ResourceLoader resourceLoader;
+
+    private PathMatcher pathMatcher = new AntPathMatcher();
+
+    public PathMatchingResourcePatternResolver() {
+        this.resourceLoader = new DefaultResourceLoader();
+    }
+
+    public PathMatchingResourcePatternResolver(java.lang.ClassLoader classLoader) {
+        this.resourceLoader = new DefaultResourceLoader(classLoader);
+    }
+
+    public PathMatchingResourcePatternResolver(ResourceLoader resourceLoader) {
+        Assert.notNull(resourceLoader, "ResourceLoader must not be null");
+        this.resourceLoader = resourceLoader;
+    }
+
+    public ResourceLoader getResourceLoader() {
+        return this.resourceLoader;
+    }
+
+    public void setPathMatcher(PathMatcher pathMatcher) {
+        Assert.notNull(pathMatcher, "PathMatcher must not be null");
+        this.pathMatcher = pathMatcher;
+    }
+
 
     @Override
     public Resource[] getResources(String locationPattern) throws IOException {
@@ -22,6 +49,6 @@ public class PathMatchingResourcePatternResolver implements ResourcePatternResol
 
     @Override
     public ClassLoader getClassLoader() {
-        return null;
+        return getResourceLoader().getClassLoader();
     }
 }
