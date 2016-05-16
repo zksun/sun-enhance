@@ -1,15 +1,15 @@
 package com.sun.enhance.asm;
 
 import org.objectweb.asm.Type;
+import sun.reflect.generics.tree.TypeTree;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by zksun on 5/12/16.
  */
-public class Annoteition implements Serializable {
+public class Annoteition extends Member {
 
     private Type type;
 
@@ -19,11 +19,19 @@ public class Annoteition implements Serializable {
 
     private Class<?> clazz;
 
-    public Annoteition(boolean visible, Type type, Class<?> cls) {
+    public Annoteition(boolean visible, Type type, Class<?> cls, Member root) {
+        checkArguments(type, cls, root);
         this.visible = visible;
         this.type = type;
         this.clazz = cls;
+        this.root = root;
+        if (null == type || null == cls) {
+            throw new NullPointerException("no type or cls");
+        }
+        this.root = root;
+        this.name = cls.getName();
     }
+
 
     public Type getType() {
         return type;
@@ -71,4 +79,16 @@ public class Annoteition implements Serializable {
         return null == values.get(name) ? "" : values.get(name);
     }
 
+    void checkArguments(Type type, Class<?> cls, Member root) {
+        if (null == type) {
+            throw new NullPointerException("type");
+        }
+        if (null == cls) {
+            throw new NullPointerException("cls");
+        }
+        if (null == root) {
+
+        }
+
+    }
 }

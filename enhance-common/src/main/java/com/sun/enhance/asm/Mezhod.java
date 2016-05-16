@@ -5,15 +5,14 @@ import org.objectweb.asm.Type;
 /**
  * Created by zksun on 5/11/16.
  */
-public class Mezhod {
+public class Mezhod extends Member {
     private int modifiers;
-    private String name;
     private Type returnType;
     private Type[] parameterTypes;
     private Type[] exceptionTypes;
 
-    public Mezhod(int modifiers, String name, Type returnType, Type[] parameterTypes, Type[] exceptionTypes) {
-        checkArguments(name, returnType);
+    public Mezhod(int modifiers, String name, Type returnType, Type[] parameterTypes, Type[] exceptionTypes, Member root) {
+        checkArguments(name, returnType, root);
         this.name = name;
         this.returnType = returnType;
         this.parameterTypes = parameterTypes;
@@ -21,14 +20,6 @@ public class Mezhod {
         this.modifiers = modifiers;
     }
 
-    private void checkArguments(String name, Type returnType) {
-        if (null == name || name.equals("")) {
-            throw new NullPointerException("name");
-        }
-        if (null == returnType) {
-            throw new NullPointerException("returnType");
-        }
-    }
 
     public int getModifiers() {
         return modifiers;
@@ -44,6 +35,18 @@ public class Mezhod {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    private void checkArguments(String name, Type returnType, Member root) {
+        if (null == name || name.equals("")) {
+            throw new NullPointerException("name");
+        }
+        if (null == returnType) {
+            throw new NullPointerException("returnType");
+        }
+        if (null == root) {
+            throw new NullPointerException("root");
+        }
     }
 
     public Type getReturnType() {

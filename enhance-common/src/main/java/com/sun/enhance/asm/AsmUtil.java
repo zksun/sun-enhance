@@ -121,8 +121,13 @@ public final class AsmUtil {
         return classes;
     }
 
-    public Clazz getClazzStructure() {
+    static String classCanonicalName2SimpleName(String canonicalName) {
+        String names[] = canonicalName.split(".");
+        return names[names.length - 1];
+    }
 
+    public Clazz getClazzStructure() {
+        return null;
     }
 
     private static class ClazzAdapter extends ClassAdapter {
