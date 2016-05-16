@@ -121,6 +121,10 @@ public final class AsmUtil {
         return classes;
     }
 
+    public Clazz getClazzStructure() {
+
+    }
+
     private static class ClazzAdapter extends ClassAdapter {
 
         private List<Mezhod> mezhodList = new ArrayList<Mezhod>();

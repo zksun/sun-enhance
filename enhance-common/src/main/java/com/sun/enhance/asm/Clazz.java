@@ -8,6 +8,7 @@ import java.io.Serializable;
 public final class Clazz implements Serializable {
 
     private String name;
+    private String classCanonicalName;
     private Feeld[] fields;
     private Mezhod[] methods;
     private Class<?>[] interfaces;
@@ -42,5 +43,13 @@ public final class Clazz implements Serializable {
 
     public void setInterfaces(Class<?>[] interfaces) {
         this.interfaces = interfaces;
+    }
+
+    public String getClassCanonicalName() {
+        return classCanonicalName;
+    }
+
+    public void setClassCanonicalName(String classCanonicalName) {
+        this.classCanonicalName = classCanonicalName;
     }
 }
