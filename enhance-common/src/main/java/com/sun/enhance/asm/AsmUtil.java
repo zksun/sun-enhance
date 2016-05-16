@@ -40,71 +40,90 @@ public final class AsmUtil {
         return classWriter;
     }
 
-    static void executeMethodAdapter(ClassAdapter adapter, Class<?> cls) {
+    static void executeMethodAdapter(ClassAdapter adapter, String classCanonicalName) {
         if (null == adapter) {
             throw new NullPointerException("adapter");
         }
-        if (null == cls) {
-            throw new NullPointerException("cls");
+        if (null == classCanonicalName || classCanonicalName.equals("")) {
+            throw new NullPointerException("classCanonicalName");
         }
 
         try {
-            ClassReader cr = new ClassReader(cls.getCanonicalName());
+            ClassReader cr = new ClassReader(classCanonicalName);
             cr.accept(adapter, ClassReader.SKIP_DEBUG);
         } catch (Throwable throwable) {
-            logger.error("get classWriter class object failure for class: {}", cls.getName(), throwable);
+            logger.error("get classWriter class object failure for class: {}", classCanonicalName, throwable);
         }
 
     }
 
-    static void executeFieldAdapter(FeeldAdapter adapter, Class<?> cls) {
+    static void executeFieldAdapter(ClazzAdapter adapter, String classCanonicalName) {
         if (null == adapter) {
             throw new NullPointerException("adapter");
         }
-        if (null == cls) {
-            throw new NullPointerException("cls");
+        if (null == classCanonicalName || classCanonicalName.equals("")) {
+            throw new NullPointerException("classCanonicalName");
         }
 
         try {
-            ClassReader cr = new ClassReader(cls.getCanonicalName());
+            ClassReader cr = new ClassReader(classCanonicalName);
             cr.accept(adapter, ClassReader.SKIP_DEBUG);
         } catch (Throwable throwable) {
-            logger.error("get classWriter class object failure for class: {}", cls.getName(), throwable);
+            logger.error("get classWriter class object failure for class: {}", classCanonicalName, throwable);
         }
     }
 
 
-    public static Mezhod[] getClassMethods(Class<?> cls) {
-        if (null == cls) {
-            throw new NullPointerException("cls");
+    static Mezhod[] getClassMethods(String classCanonicalName) {
+        if (null == classCanonicalName || classCanonicalName.equals("")) {
+            throw new NullPointerException("classCanonicalName");
         }
         try {
             ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-            MezhodAdapter classAdapter = new MezhodAdapter(classWriter);
-            executeMethodAdapter(classAdapter, cls);
+            ClazzAdapter classAdapter = new ClazzAdapter(classWriter);
+            executeMethodAdapter(classAdapter, classCanonicalName);
             return classAdapter.getMezhods();
         } catch (Throwable throwable) {
-            logger.error("execute classAdapter class object failure for class: {}", cls.getName(), throwable);
+            logger.error("execute classAdapter class object failure for class: {}", classCanonicalName, throwable);
         }
         return null;
     }
 
-    public static Feeld[] getClassFeelds(Class<?> cls) {
-        if (null == cls) {
-            throw new NullPointerException("cls");
+    static Feeld[] getClassFeelds(String classCanonicalName) {
+        if (null == classCanonicalName || classCanonicalName.equals("")) {
+            throw new NullPointerException("classCanonicalName");
         }
         try {
             ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-            FeeldAdapter classAdapter = new FeeldAdapter(classWriter);
-            executeFieldAdapter(classAdapter, cls);
+            ClazzAdapter classAdapter = new ClazzAdapter(classWriter);
+            executeFieldAdapter(classAdapter, classCanonicalName);
             return classAdapter.getFeelds();
         } catch (Throwable throwable) {
-            logger.error("execute classAdapter class object failure for class: {}", cls.getName(), throwable);
+            logger.error("execute classAdapter class object failure for class: {}", classCanonicalName, throwable);
         }
         return null;
     }
 
-    private static class FeeldAdapter extends ClassAdapter {
+    static Class<?>[] getInterfaces(String[] interfaces) {
+        if (null == interfaces || interfaces.length < 1) {
+            throw new NullPointerException("interfaces");
+        }
+
+        Class<?>[] classes = new Class<?>[interfaces.length];
+
+        for (int i = 0; i < interfaces.length; i++) {
+            try {
+                classes[i] = Class.forName(interfaces[0].replace('/', '.'));
+            } catch (ClassNotFoundException e) {
+                continue;
+            }
+        }
+        return classes;
+    }
+
+    private static class ClazzAdapter extends ClassAdapter {
+
+        private List<Mezhod> mezhodList = new ArrayList<Mezhod>();
 
         private List<Feeld> feeldList = new ArrayList<Feeld>();
 
@@ -115,77 +134,13 @@ public final class AsmUtil {
          *
          * @param cv the class visitor to which this adapter must delegate calls.
          */
-        public FeeldAdapter(ClassVisitor cv) {
+        public ClazzAdapter(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
-        public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
-            Feeld feeld;
-            if (null != (feeld = createFeeld(access, name, desc))) {
-                _curFeeld = feeld;
-                feeldList.add(feeld);
-            }
-            return new FieldAnnotationAdapter();
-        }
+        public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
 
-        public Feeld[] getFeelds() {
-            if (CollectionUtils.isNotEmpty(feeldList)) {
-                return (Feeld[]) feeldList.toArray();
-            }
-            return null;
-        }
-
-        private Feeld createFeeld(int modifier, String name, String desc) {
-            return new Feeld(modifier, name, Type.getType(desc));
-        }
-
-
-        private class FieldAnnotationAdapter implements FieldVisitor {
-            @Override
-            public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-                System.out.println(String.format("annotation: {%s}", desc));
-                Annoteition annotation;
-                if (null != (annotation = createAnnoteition(desc, visible))) {
-                    setAnnotation(annotation);
-                }
-                return null;
-            }
-
-            @Override
-            public void visitAttribute(Attribute attr) {
-                //do nothing
-            }
-
-            @Override
-            public void visitEnd() {
-                //do nothing
-            }
-
-            private Annoteition createAnnoteition(String desc, boolean visible) {
-                return new Annoteition();
-            }
-
-            private void setAnnotation(Annoteition annotation) {
-                if (null != _curFeeld) {
-
-                }
-            }
-        }
-
-    }
-
-    private static class MezhodAdapter extends ClassAdapter {
-
-        private List<Mezhod> mezhodList = new ArrayList<Mezhod>();
-
-        /**
-         * Constructs a new {@link ClassAdapter} object.
-         *
-         * @param cv the class visitor to which this adapter must delegate calls.
-         */
-        public MezhodAdapter(ClassVisitor cv) {
-            super(cv);
         }
 
         @Override
@@ -195,6 +150,12 @@ public final class AsmUtil {
                 mezhodList.add(method);
             }
             return super.visitMethod(access, name, desc, signature, exceptions);
+        }
+
+        @Override
+        public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+            System.out.println(desc);
+            return super.visitAnnotation(desc, visible);
         }
 
         private Mezhod createMethod(int access, String name, String desc, String[] exceptions) {
@@ -215,9 +176,100 @@ public final class AsmUtil {
 
         public Mezhod[] getMezhods() {
             if (CollectionUtils.isNotEmpty(mezhodList)) {
-                return (Mezhod[]) mezhodList.toArray();
+                return mezhodList.toArray(new Mezhod[mezhodList.size()]);
             }
             return null;
         }
+
+        @Override
+        public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
+            Feeld feeld;
+            if (null != (feeld = createFeeld(access, name, desc))) {
+                _curFeeld = feeld;
+                feeldList.add(feeld);
+            }
+            return new FieldAnnotationAdapter();
+        }
+
+        public Feeld[] getFeelds() {
+            if (CollectionUtils.isNotEmpty(feeldList)) {
+                return feeldList.toArray(new Feeld[feeldList.size()]);
+            }
+            return null;
+        }
+
+        private Feeld createFeeld(int modifier, String name, String desc) {
+            return new Feeld(modifier, name, Type.getType(desc));
+        }
+
+        private abstract class abstractAnnotationAdapter implements AnnotationVisitor {
+            @Override
+            public void visit(String name, Object value) {
+
+            }
+
+            @Override
+            public void visitEnum(String name, String desc, String value) {
+
+            }
+
+            @Override
+            public AnnotationVisitor visitAnnotation(String name, String desc) {
+                return null;
+            }
+
+            @Override
+            public AnnotationVisitor visitArray(String name) {
+                return null;
+            }
+
+            @Override
+            public void visitEnd() {
+
+            }
+        }
+
+        private class FieldAnnotationAdapter implements FieldVisitor {
+            @Override
+            public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+                final Annoteition annotation;
+                try {
+                    if (null != (annotation = createAnnoteition(desc, visible))) {
+                        setAnnotation(annotation);
+                    }
+                } catch (Exception e) {
+                    logger.error("parser annotation error with desc: {} ", desc, e);
+                    throw new RuntimeException(e);
+                }
+                return new abstractAnnotationAdapter() {
+                    @Override
+                    public void visit(String name, Object value) {
+                        annotation.addValue(name, value.toString());
+                    }
+                };
+            }
+
+            @Override
+            public void visitAttribute(Attribute attr) {
+                //do nothing
+            }
+
+            @Override
+            public void visitEnd() {
+                //do nothing
+            }
+
+            private Annoteition createAnnoteition(String desc, boolean visible) throws ClassNotFoundException {
+                return new Annoteition(visible, Type.getType(desc), Class.forName(Type.getType(desc).getClassName()));
+            }
+
+            private synchronized void setAnnotation(Annoteition annotation) {
+                if (null != _curFeeld) {
+                    _curFeeld.addAnnotation(annotation);
+                    _curFeeld = null;
+                }
+            }
+        }
+
     }
 }

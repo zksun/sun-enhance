@@ -3,6 +3,8 @@ package com.sun.enhance.asm;
 import org.objectweb.asm.Type;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by zksun on 5/12/16.
@@ -13,12 +15,14 @@ public class Annoteition implements Serializable {
 
     private boolean visible;
 
-    private Object value;
+    private Map<String, String> values;
 
-    public Annoteition(boolean visible, Type type, Object value) {
+    private Class<?> clazz;
+
+    public Annoteition(boolean visible, Type type, Class<?> cls) {
         this.visible = visible;
         this.type = type;
-        this.value = value;
+        this.clazz = cls;
     }
 
     public Type getType() {
@@ -37,11 +41,34 @@ public class Annoteition implements Serializable {
         this.visible = visible;
     }
 
-    public Object getValue() {
-        return value;
+    public Class<?> getClazz() {
+        return clazz;
     }
 
-    public void setValue(Object value) {
-        this.value = value;
+    public void setClazz(Class<?> clazz) {
+        this.clazz = clazz;
     }
+
+    public Map<String, String> getValues() {
+        return values;
+    }
+
+    public void setValues(Map<String, String> values) {
+        this.values = values;
+    }
+
+    public void addValue(String name, String value) {
+        if (null == name || name.equals("")) {
+            throw new NullPointerException("name");
+        }
+        synchronized (type) {
+            values = null == values ? new HashMap<String, String>() : values;
+        }
+        values.put(name, value);
+    }
+
+    public String getValue(String name) {
+        return null == values.get(name) ? "" : values.get(name);
+    }
+
 }

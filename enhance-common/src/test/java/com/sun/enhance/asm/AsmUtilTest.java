@@ -15,13 +15,13 @@ public class AsmUtilTest {
 
     @Test
     public void getMethodsTest() {
-        Mezhod[] classMethods = AsmUtil.getClassMethods(TestClazz.class);
+        Mezhod[] classMethods = AsmUtil.getClassMethods(TestClazz.class.getCanonicalName());
         Assert.assertTrue(null != classMethods);
     }
 
     @Test
     public void getFieldsTest() {
-        Feeld[] classFields = AsmUtil.getClassFeelds(TestClazz.class);
+        Feeld[] classFields = AsmUtil.getClassFeelds(TestClazz.class.getCanonicalName());
         Assert.assertTrue(null != classFields);
     }
 }

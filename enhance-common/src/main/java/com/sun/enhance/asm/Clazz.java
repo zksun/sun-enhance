@@ -10,6 +10,7 @@ public final class Clazz implements Serializable {
     private String name;
     private Feeld[] fields;
     private Mezhod[] methods;
+    private Class<?>[] interfaces;
 
     public String getName() {
         return name;
@@ -35,6 +36,11 @@ public final class Clazz implements Serializable {
         this.methods = methods;
     }
 
+    public Class<?>[] getInterfaces() {
+        return interfaces;
+    }
 
-
+    public void setInterfaces(Class<?>[] interfaces) {
+        this.interfaces = interfaces;
+    }
 }

@@ -57,13 +57,13 @@ public class Feeld implements Serializable {
 
     public synchronized void addAnnotation(Annoteition annotation) {
         if (null == annotations) {
-            List<Annoteition> temp = new ArrayList<Annoteition>();
+            List<Annoteition> temp = new ArrayList<Annoteition>(1);
             temp.add(annotation);
-            annotations = (Annoteition[]) temp.toArray();
+            annotations = temp.toArray(new Annoteition[1]);
         } else {
             List<Annoteition> temp = Arrays.asList(annotations);
             temp.add(annotation);
-            annotations = (Annoteition[]) temp.toArray();
+            annotations = temp.toArray(new Annoteition[temp.size()]);
         }
     }
 

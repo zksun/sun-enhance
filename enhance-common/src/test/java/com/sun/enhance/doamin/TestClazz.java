@@ -3,15 +3,16 @@ package com.sun.enhance.doamin;
 import com.sun.enhance.annotation.Enhance;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 /**
  * Created by zksun on 5/11/16.
  */
-public class TestClazz {
+public class TestClazz implements Serializable {
     private Integer intValue;
 
     private Boolean booleanValue;
-    @Enhance(value = "world")
+    @Enhance(value = "world", attr = "attr")
     private String stringValue;
 
     private Long longValue;
