@@ -202,7 +202,7 @@ public final class AsmUtil {
             return new Feeld(modifier, name, Type.getType(desc));
         }
 
-        private abstract class abstractAnnotationAdapter implements AnnotationVisitor {
+        private abstract class AbstractAnnotationAdapter implements AnnotationVisitor {
             @Override
             public void visit(String name, Object value) {
 
@@ -241,7 +241,7 @@ public final class AsmUtil {
                     logger.error("parser annotation error with desc: {} ", desc, e);
                     throw new RuntimeException(e);
                 }
-                return new abstractAnnotationAdapter() {
+                return new AbstractAnnotationAdapter() {
                     @Override
                     public void visit(String name, Object value) {
                         annotation.addValue(name, value.toString());
