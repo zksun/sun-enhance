@@ -80,7 +80,7 @@ public final class AsmUtil {
         }
         try {
             ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-            ClazzAdapter classAdapter = new ClazzAdapter(classWriter);
+            ClazzAdapter classAdapter = new ClazzAdapter(new Clazz(classCanonicalName, null, null, null), classWriter);
             executeMethodAdapter(classAdapter, classCanonicalName);
             return classAdapter.getMezhods();
         } catch (Throwable throwable) {
@@ -95,7 +95,7 @@ public final class AsmUtil {
         }
         try {
             ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-            ClazzAdapter classAdapter = new ClazzAdapter(classWriter);
+            ClazzAdapter classAdapter = new ClazzAdapter(new Clazz(classCanonicalName, null, null, null), classWriter);
             executeFieldAdapter(classAdapter, classCanonicalName);
             return classAdapter.getFeelds();
         } catch (Throwable throwable) {
@@ -126,7 +126,8 @@ public final class AsmUtil {
         return names[names.length - 1];
     }
 
-    public Clazz getClazzStructure() {
+    public Clazz getClazzStructure(String canonicalName) {
+        new ClazzAdapter(new Clazz(canonicalName, null, null, null), new ClassWriter(ClassWriter.COMPUTE_MAXS));
         return null;
     }
 
@@ -138,18 +139,27 @@ public final class AsmUtil {
 
         private Feeld _curFeeld;
 
-        /**
-         * Constructs a new {@link ClassAdapter} object.
-         *
-         * @param cv the class visitor to which this adapter must delegate calls.
-         */
-        public ClazzAdapter(ClassVisitor cv) {
+        private final Clazz _self;
+
+
+        public ClazzAdapter(Clazz self, ClassVisitor cv) {
             super(cv);
+            checkArguments(self, cv);
+            this._self = self;
+        }
+
+        private void checkArguments(Clazz self, ClassVisitor cv) {
+            if (null == self) {
+                throw new NullPointerException("self");
+            }
+            if (null == cv) {
+
+            }
         }
 
         @Override
         public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-
+            getInterfaces(interfaces);
         }
 
         @Override
@@ -168,7 +178,7 @@ public final class AsmUtil {
         }
 
         private Mezhod createMethod(int access, String name, String desc, String[] exceptions) {
-            return new Mezhod(access, name, Type.getReturnType(desc), Type.getArgumentTypes(desc), getExceptions(exceptions));
+            return new Mezhod(access, name, Type.getReturnType(desc), Type.getArgumentTypes(desc), getExceptions(exceptions), this._self);
         }
 
         private Type[] getExceptions(String[] exceptions) {
@@ -208,7 +218,7 @@ public final class AsmUtil {
         }
 
         private Feeld createFeeld(int modifier, String name, String desc) {
-            return new Feeld(modifier, name, Type.getType(desc));
+            return new Feeld(modifier, name, Type.getType(desc), this._self);
         }
 
         private abstract class AbstractAnnotationAdapter implements AnnotationVisitor {
@@ -269,7 +279,7 @@ public final class AsmUtil {
             }
 
             private Annoteition createAnnoteition(String desc, boolean visible) throws ClassNotFoundException {
-                return new Annoteition(visible, Type.getType(desc), Class.forName(Type.getType(desc).getClassName()));
+                return new Annoteition(visible, Type.getType(desc), Class.forName(Type.getType(desc).getClassName()), ClazzAdapter.this._self);
             }
 
             private synchronized void setAnnotation(Annoteition annotation) {

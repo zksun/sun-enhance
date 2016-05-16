@@ -1,4 +1,4 @@
-package com.sun.enhance.internal.util;
+package com.sun.enhance.util;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -6,7 +6,7 @@ import java.security.PrivilegedAction;
 /**
  * Created by zksun on 5/12/16.
  */
-public final class SystemUtil {
+public final class SystemUtils {
     /**
      * @return
      */
@@ -40,6 +40,20 @@ public final class SystemUtil {
         }
     }
 
+    public static ClassLoader getDefaultClassLoader() {
+        ClassLoader cl = null;
+        try {
+            cl = Thread.currentThread().getContextClassLoader();
+        } catch (Throwable ex) {
+            // Cannot access thread context ClassLoader - falling back to system class loader...
+        }
+        if (cl == null) {
+            // No thread context class loader -> use class loader of this class.
+            cl = SystemUtils.class.getClassLoader();
+        }
+        return cl;
+    }
+
 
     /**
      * @param className
@@ -50,5 +64,17 @@ public final class SystemUtil {
      */
     public static Class loadClass(String className, boolean initialize, ClassLoader classLoader) throws ClassNotFoundException {
         return Class.forName(className, initialize, classLoader);
+    }
+
+    public static String getClassPath() {
+        return System.getProperty("java.class.path");
+    }
+
+    public static String getUserHomePath() {
+        return System.getProperty("user.home");
+    }
+
+    public static String getUserDirPath() {
+        return System.getProperty("user.dir");
     }
 }
