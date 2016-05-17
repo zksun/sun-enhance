@@ -81,8 +81,13 @@ public class TestClazz implements Serializable {
         this.shortValue = shortValue;
     }
 
-    @MethodEnhance
+    @MethodEnhance(methodName = "testMethod")
     public void testMethod(String arg) throws IOException {
+
+    }
+
+    @MethodEnhance(methodName = "testMethod0")
+    public void testMethod0(String arg) throws IOException {
 
     }
 }

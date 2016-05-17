@@ -11,8 +11,6 @@ public class Mezhod extends AnnotationMemberAdapter {
     private Type[] parameterTypes;
     private Type[] exceptionTypes;
 
-    private Annoteition[] annotations;
-
     public Mezhod(int modifiers, String name, Type returnType, Type[] parameterTypes, Type[] exceptionTypes, Member root) {
         checkArguments(name, returnType, root);
         this.name = name;
