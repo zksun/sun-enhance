@@ -2,8 +2,6 @@ package com.sun.enhance.asm;
 
 import com.sun.enhance.domain.SayHello;
 import com.sun.enhance.domain.TestClazz;
-import com.sun.enhance.logging.Logger;
-import com.sun.enhance.logging.LoggerFactory;
 import com.sun.enhance.util.ClassUtils;
 import com.sun.enhance.util.IOUtils;
 import org.junit.Assert;
@@ -13,8 +11,6 @@ import org.objectweb.asm.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.URL;
 
 import static org.objectweb.asm.Opcodes.*;
@@ -23,9 +19,6 @@ import static org.objectweb.asm.Opcodes.*;
  * Created by zksun on 5/12/16.
  */
 public class AsmUtilTest {
-
-    private final static Logger logger = LoggerFactory.getLogger(AsmUtilTest.class);
-
     @Test
     public void getMethodsTest() {
         Mezhod[] classMethods = AsmUtils.getClassMethods(TestClazz.class.getCanonicalName());
@@ -41,6 +34,7 @@ public class AsmUtilTest {
     @Test
     public void enhanceClassTest01() {
         URL resource = ClassUtils.getDefaultClassLoader().getResource("com/sun/enhance/domain/TestClazz.class");
+        Assert.assertTrue(null != resource);
         File file = new File(resource.getFile());
         if (file.exists()) {
             try {
@@ -99,61 +93,14 @@ public class AsmUtilTest {
                 SayHello hello = new SayHello();
                 hello.sayHello();
             } catch (Exception e) {
-                e.printStackTrace();
+                Assert.fail(e.getMessage());
             }
         }
         System.out.println("end");
 
     }
 
-    static class GeneralClassAdapter extends ClassAdapter {
 
-        /**
-         * Constructs a new {@link ClassAdapter} object.
-         *
-         * @param cv the class visitor to which this adapter must delegate calls.
-         */
-        public GeneralClassAdapter(ClassVisitor cv) {
-            super(cv);
-        }
-
-        @Override
-        public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-            MethodVisitor methodVisitor = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals("sayHello")) {
-                MethodVisitor newMv = new SayHelloMethod(methodVisitor);
-                return newMv;
-            } else {
-                return methodVisitor;
-            }
-        }
-
-        @Override
-        public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
-            return super.visitField(access, name, desc, signature, value);
-        }
-
-    }
-
-    static class SayHelloMethod extends MethodAdapter {
-        public SayHelloMethod(MethodVisitor mv) {
-            super(mv);
-        }
-
-        @Override
-        public void visitCode() {
-            mv.visitVarInsn(Opcodes.ALOAD, 0);
-            mv.visitLdcInsn("hello world");
-            mv.visitFieldInsn(Opcodes.PUTFIELD, "com/sun/enhance/domain/SayHello", "name", Type.getDescriptor(String.class));
-
-            mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
-            mv.visitVarInsn(ALOAD, 0);
-            mv.visitFieldInsn(GETFIELD, "com/sun/enhance/domain/SayHello", "name", "Ljava/lang/String;");
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V");
-        }
-
-
-    }
 
 
 }
