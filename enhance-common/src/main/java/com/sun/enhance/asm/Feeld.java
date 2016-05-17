@@ -9,11 +9,9 @@ import java.util.List;
 /**
  * Created by zksun on 5/12/16.
  */
-public class Feeld extends Member {
+public class Feeld extends AnnotationMemberAdapter {
     private int modifier;
     private Type type;
-
-    private Annoteition[] annotations;
 
     public Feeld(int modifier, String name, Type type, Member root) {
         checkArguments(name, type, root);
@@ -59,24 +57,5 @@ public class Feeld extends Member {
         this.type = type;
     }
 
-    public Annoteition[] getAnnotations() {
-        return annotations;
-    }
-
-    public void setAnnotations(Annoteition[] annotations) {
-        this.annotations = annotations;
-    }
-
-    public synchronized void addAnnotation(Annoteition annotation) {
-        if (null == annotations) {
-            List<Annoteition> temp = new ArrayList<Annoteition>(1);
-            temp.add(annotation);
-            annotations = temp.toArray(new Annoteition[1]);
-        } else {
-            List<Annoteition> temp = Arrays.asList(annotations);
-            temp.add(annotation);
-            annotations = temp.toArray(new Annoteition[temp.size()]);
-        }
-    }
 
 }

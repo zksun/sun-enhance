@@ -3,6 +3,7 @@ package com.sun.enhance.asm;
 import org.objectweb.asm.Type;
 import sun.reflect.generics.tree.TypeTree;
 
+import java.lang.annotation.ElementType;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,17 +20,16 @@ public class Annoteition extends Member {
 
     private Class<?> clazz;
 
-    public Annoteition(boolean visible, Type type, Class<?> cls, Member root) {
+    private ElementType elementType;
+
+    public Annoteition(boolean visible, Type type, Class<?> cls, ElementType elementType, Member root) {
         checkArguments(type, cls, root);
         this.visible = visible;
         this.type = type;
         this.clazz = cls;
         this.root = root;
-        if (null == type || null == cls) {
-            throw new NullPointerException("no type or cls");
-        }
-        this.root = root;
         this.name = cls.getName();
+        this.elementType = elementType;
     }
 
 
@@ -79,6 +79,14 @@ public class Annoteition extends Member {
         return null == values.get(name) ? "" : values.get(name);
     }
 
+    public ElementType getElementType() {
+        return elementType;
+    }
+
+    public void setElementType(ElementType elementType) {
+        this.elementType = elementType;
+    }
+
     void checkArguments(Type type, Class<?> cls, Member root) {
         if (null == type) {
             throw new NullPointerException("type");
@@ -87,7 +95,7 @@ public class Annoteition extends Member {
             throw new NullPointerException("cls");
         }
         if (null == root) {
-
+            throw new NullPointerException("cls");
         }
 
     }

@@ -6,12 +6,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by zksun on 5/12/16.
+ * Created by zksun on 5/17/16.
  */
-@Target(ElementType.FIELD)
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Enhance {
-    String value();
-    String attr();
-}
+public @interface MethodEnhance {
 
+}

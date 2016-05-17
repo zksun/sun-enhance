@@ -11,9 +11,13 @@ import static com.sun.enhance.asm.AsmUtil.*;
  */
 public final class Clazz extends Member {
     private String classCanonicalName;
+    private String simpleName;
     private Feeld[] fields;
     private Mezhod[] methods;
     private Class<?>[] interfaces;
+    private String superName;
+    private int modifiers;
+    private int version;
     private Map<Annotation, Annoteition> annotationData;
 
     public Clazz(String classCanonicalName, Feeld[] feelds, Mezhod[] mezhods, Class<?>[] interfaces) {
@@ -22,7 +26,7 @@ public final class Clazz extends Member {
         this.fields = feelds;
         this.methods = mezhods;
         this.interfaces = interfaces;
-        this.name = classCanonicalName2SimpleName(classCanonicalName);
+        this.simpleName = classCanonicalName2SimpleName(classCanonicalName);
         this.root = this;
     }
 
@@ -72,5 +76,35 @@ public final class Clazz extends Member {
         this.classCanonicalName = classCanonicalName;
     }
 
+    public String getSuperName() {
+        return superName;
+    }
 
+    public void setSuperName(String superName) {
+        this.superName = superName;
+    }
+
+    public int getModifiers() {
+        return modifiers;
+    }
+
+    public void setModifiers(int modifiers) {
+        this.modifiers = modifiers;
+    }
+
+    public String getSimpleName() {
+        return simpleName;
+    }
+
+    public void setSimpleName(String simpleName) {
+        this.simpleName = simpleName;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
 }

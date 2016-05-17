@@ -1,6 +1,7 @@
-package com.sun.enhance.doamin;
+package com.sun.enhance.domain;
 
-import com.sun.enhance.annotation.Enhance;
+import com.sun.enhance.annotation.FieldEnhance;
+import com.sun.enhance.annotation.MethodEnhance;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -12,7 +13,7 @@ public class TestClazz implements Serializable {
     private Integer intValue;
 
     private Boolean booleanValue;
-    @Enhance(value = "world", attr = "attr")
+    @FieldEnhance(value = "world", attr = "attr")
     private String stringValue;
 
     private Long longValue;
@@ -80,6 +81,7 @@ public class TestClazz implements Serializable {
         this.shortValue = shortValue;
     }
 
+    @MethodEnhance
     public void testMethod(String arg) throws IOException {
 
     }

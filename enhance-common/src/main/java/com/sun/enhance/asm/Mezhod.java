@@ -5,11 +5,13 @@ import org.objectweb.asm.Type;
 /**
  * Created by zksun on 5/11/16.
  */
-public class Mezhod extends Member {
+public class Mezhod extends AnnotationMemberAdapter {
     private int modifiers;
     private Type returnType;
     private Type[] parameterTypes;
     private Type[] exceptionTypes;
+
+    private Annoteition[] annotations;
 
     public Mezhod(int modifiers, String name, Type returnType, Type[] parameterTypes, Type[] exceptionTypes, Member root) {
         checkArguments(name, returnType, root);
@@ -18,6 +20,7 @@ public class Mezhod extends Member {
         this.parameterTypes = parameterTypes;
         this.exceptionTypes = exceptionTypes;
         this.modifiers = modifiers;
+        this.root = root;
     }
 
 
@@ -72,4 +75,6 @@ public class Mezhod extends Member {
     public void setExceptionTypes(Type[] exceptionTypes) {
         this.exceptionTypes = exceptionTypes;
     }
+
+
 }

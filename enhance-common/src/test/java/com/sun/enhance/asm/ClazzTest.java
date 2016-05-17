@@ -1,6 +1,6 @@
 package com.sun.enhance.asm;
 
-import com.sun.enhance.doamin.TestClazz;
+import com.sun.enhance.domain.TestClazz;
 
 import java.lang.reflect.Method;
 
