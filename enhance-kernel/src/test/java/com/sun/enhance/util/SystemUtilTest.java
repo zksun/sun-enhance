@@ -9,8 +9,8 @@ public class SystemUtilTest {
 
     @Test
     public void systemPropertiesTest() {
-        System.out.println(SystemUtils.getClassPath());
-        System.out.println(SystemUtils.getUserDirPath());
+        System.out.println(ClassUtils.getClassPath());
+        System.out.println(ClassUtils.getUserDirPath());
     }
 
 }

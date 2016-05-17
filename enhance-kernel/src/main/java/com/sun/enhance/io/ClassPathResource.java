@@ -3,7 +3,7 @@ package com.sun.enhance.io;
 import com.sun.enhance.util.Assert;
 import com.sun.enhance.util.ObjectUtils;
 import com.sun.enhance.util.StringUtils;
-import com.sun.enhance.util.SystemUtils;
+import com.sun.enhance.util.ClassUtils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -44,7 +44,7 @@ public class ClassPathResource extends AbstractFileResolvingResource {
             pathToUse = pathToUse.substring(1);
         }
         this.path = pathToUse;
-        this.classLoader = (classLoader != null ? classLoader : SystemUtils.getDefaultClassLoader());
+        this.classLoader = (classLoader != null ? classLoader : ClassUtils.getDefaultClassLoader());
     }
 
     /**
@@ -174,7 +174,7 @@ public class ClassPathResource extends AbstractFileResolvingResource {
         StringBuilder builder = new StringBuilder("class path resource [");
         String pathToUse = path;
         if (this.clazz != null && !pathToUse.startsWith("/")) {
-            builder.append(SystemUtils.classPackageAsResourcePath(this.clazz));
+            builder.append(ClassUtils.classPackageAsResourcePath(this.clazz));
             builder.append('/');
         }
         if (pathToUse.startsWith("/")) {

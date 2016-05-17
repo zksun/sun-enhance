@@ -2,7 +2,7 @@ package com.sun.enhance.io;
 
 import com.sun.enhance.util.Assert;
 import com.sun.enhance.util.StringUtils;
-import com.sun.enhance.util.SystemUtils;
+import com.sun.enhance.util.ClassUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -22,7 +22,7 @@ public class DefaultResourceLoader implements ResourceLoader {
      * @see java.lang.Thread#getContextClassLoader()
      */
     public DefaultResourceLoader() {
-        this.classLoader = SystemUtils.getDefaultClassLoader();
+        this.classLoader = ClassUtils.getDefaultClassLoader();
     }
 
     /**
@@ -48,7 +48,7 @@ public class DefaultResourceLoader implements ResourceLoader {
 
     @Override
     public ClassLoader getClassLoader() {
-        return (this.classLoader != null ? this.classLoader : SystemUtils.getDefaultClassLoader());
+        return (this.classLoader != null ? this.classLoader : ClassUtils.getDefaultClassLoader());
     }
 
 

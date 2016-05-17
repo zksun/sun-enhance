@@ -6,7 +6,7 @@ import java.security.PrivilegedAction;
 /**
  * Created by zksun on 5/12/16.
  */
-public final class SystemUtils {
+public final class ClassUtils {
     /**
      * @return
      */
@@ -49,7 +49,7 @@ public final class SystemUtils {
         }
         if (cl == null) {
             // No thread context class loader -> use class loader of this class.
-            cl = SystemUtils.class.getClassLoader();
+            cl = ClassUtils.class.getClassLoader();
         }
         return cl;
     }

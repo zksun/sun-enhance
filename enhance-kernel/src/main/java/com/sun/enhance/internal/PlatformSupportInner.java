@@ -1,6 +1,6 @@
 package com.sun.enhance.internal;
 
-import com.sun.enhance.util.SystemUtils;
+import com.sun.enhance.util.ClassUtils;
 import com.sun.enhance.logging.Logger;
 import com.sun.enhance.logging.LoggerFactory;
 import sun.misc.Unsafe;
@@ -23,7 +23,7 @@ public final class PlatformSupportInner {
         boolean directBufferFreeable = false;
 
         try {
-            Class<?> cls = SystemUtils.loadClass("sun.nio.ch.DirectBuffer", false, SystemUtils.getClassLoader(PlatformSupportInner.class));
+            Class<?> cls = ClassUtils.loadClass("sun.nio.ch.DirectBuffer", false, ClassUtils.getClassLoader(PlatformSupportInner.class));
             Method method = cls.getMethod("cleaner");
             if ("sun.misc.Cleaner".equals(method.getReturnType().getName())) {
                 directBufferFreeable = true;
