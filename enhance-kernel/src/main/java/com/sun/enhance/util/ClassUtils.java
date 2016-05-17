@@ -1,5 +1,7 @@
 package com.sun.enhance.util;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
@@ -7,6 +9,17 @@ import java.security.PrivilegedAction;
  * Created by zksun on 5/12/16.
  */
 public final class ClassUtils {
+
+    private static Method CLASS_DEFINITION_METHOD;
+
+    static {
+        try {
+            CLASS_DEFINITION_METHOD = ClassLoader.class.getDeclaredMethod("defineClass", String.class, byte[].class, int.class, int.class);
+            CLASS_DEFINITION_METHOD.setAccessible(true);
+        } catch (NoSuchMethodException e) {
+        }
+    }
+
     /**
      * @return
      */
@@ -22,6 +35,7 @@ public final class ClassUtils {
             });
         }
     }
+
 
     /**
      * @param clazz
@@ -89,5 +103,16 @@ public final class ClassUtils {
 
     public static String getUserDirPath() {
         return System.getProperty("user.dir");
+    }
+
+
+    public static void classRedefine(String className, byte[] code) throws Exception {
+        if (StringUtils.isEmpty(className)) {
+            throw new NullPointerException("className");
+        }
+        if (null == code || code.length < 1) {
+            throw new NullPointerException("code");
+        }
+        CLASS_DEFINITION_METHOD.invoke(ClassLoader.getSystemClassLoader(), className, code, 0, code.length);
     }
 }

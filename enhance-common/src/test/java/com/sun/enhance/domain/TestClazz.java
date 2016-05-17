@@ -82,7 +82,7 @@ public class TestClazz implements Serializable {
     }
 
     @MethodEnhance(methodName = "testMethod")
-    public void testMethod(String arg) throws IOException {
+    public void testMethod(String arg) {
 
     }
 
