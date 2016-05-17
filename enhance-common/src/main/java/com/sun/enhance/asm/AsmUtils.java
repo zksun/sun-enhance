@@ -10,15 +10,16 @@ import org.objectweb.asm.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.ElementType;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by zksun on 5/11/16.
  */
-public final class AsmUtil {
+public final class AsmUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(AsmUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(AsmUtils.class);
 
     final static String CLINIT = "<clinit>";
     final static String INIT = "<init>";
@@ -90,7 +91,7 @@ public final class AsmUtil {
         } catch (Throwable throwable) {
             logger.error("execute classAdapter class object failure for class: {}", classCanonicalName, throwable);
         }
-        return null;
+        return EmptyElement.EMPTY_MEZHOD;
     }
 
 
@@ -106,7 +107,7 @@ public final class AsmUtil {
         } catch (Throwable throwable) {
             logger.error("execute classAdapter class object failure for class: {}", classCanonicalName, throwable);
         }
-        return null;
+        return EmptyElement.EMPTY_MEZHOD;
     }
 
     static Feeld[] getClassFeelds(InputStream inputStream, String classCanonicalName) {
@@ -121,7 +122,7 @@ public final class AsmUtil {
         } catch (Throwable throwable) {
             logger.error("execute classAdapter class object failure for class: {}", classCanonicalName, throwable);
         }
-        return null;
+        return EmptyElement.EMPTY_FEELDS;
     }
 
     static Feeld[] getClassFeelds(String classCanonicalName) {
@@ -136,7 +137,7 @@ public final class AsmUtil {
         } catch (Throwable throwable) {
             logger.error("execute classAdapter class object failure for class: {}", classCanonicalName, throwable);
         }
-        return null;
+        return EmptyElement.EMPTY_FEELDS;
     }
 
     static String classCanonicalName2SimpleName(String canonicalName) {
@@ -195,17 +196,22 @@ public final class AsmUtil {
 
         @Override
         public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-            _self.setInterfaces(getInterfaces(interfaces));
             _self.setSuperName(superName);
             _self.setName(name);
             _self.setModifiers(access);
             _self.setVersion(version);
+            if (null != interfaces && interfaces.length > 0) {
+                _self.setInterfaces(getInterfaces(interfaces));
+            }
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             Mezhod method;
-            if (null != (method = createMethod(access, name, desc, exceptions))) {
+            if (name.equals(INIT) || Modifier.isNative(access)) {
+                return super.visitMethod(access, name, desc, signature, exceptions);
+            }
+            if ((null != (method = createMethod(access, name, desc, exceptions)))) {
                 _curMezhod = method;
                 mezhodList.add(method);
             }

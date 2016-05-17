@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.net.URL;
 
 /**
@@ -21,13 +20,13 @@ public class AsmUtilTest {
 
     @Test
     public void getMethodsTest() {
-        Mezhod[] classMethods = AsmUtil.getClassMethods(TestClazz.class.getCanonicalName());
+        Mezhod[] classMethods = AsmUtils.getClassMethods(TestClazz.class.getCanonicalName());
         Assert.assertTrue(null != classMethods);
     }
 
     @Test
     public void getFieldsTest() {
-        Feeld[] classFields = AsmUtil.getClassFeelds(TestClazz.class.getCanonicalName());
+        Feeld[] classFields = AsmUtils.getClassFeelds(TestClazz.class.getCanonicalName());
         Assert.assertTrue(null != classFields);
     }
 
@@ -38,7 +37,9 @@ public class AsmUtilTest {
         if (file.exists()) {
             try {
                 FileInputStream fileInputStream = new FileInputStream(file);
-                Clazz clazzStructure = AsmUtil.getClazzStructure(fileInputStream,"com.sun.enhance.domain.TestClazz");
+                Clazz clazzStructure = AsmUtils.getClazzStructure(fileInputStream, "com.sun.enhance.domain.TestClazz");
+                System.out.println(clazzStructure.getSuperName());
+                System.out.println(AsmUtils.className2CanonicalName(clazzStructure.getSuperName()));
                 System.out.println(clazzStructure);
             } catch (Exception e) {
                 e.printStackTrace();

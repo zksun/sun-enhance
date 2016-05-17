@@ -3,7 +3,7 @@ package com.sun.enhance.asm;
 import java.lang.annotation.Annotation;
 import java.util.Map;
 
-import static com.sun.enhance.asm.AsmUtil.*;
+import static com.sun.enhance.asm.AsmUtils.*;
 
 
 /**
