@@ -1,5 +1,6 @@
 package com.sun.enhance.asm;
 
+import com.sun.enhance.NestedIOException;
 import com.sun.enhance.domain.SayHello;
 import com.sun.enhance.domain.TestClazz;
 import com.sun.enhance.util.ClassUtils;
@@ -10,6 +11,7 @@ import org.objectweb.asm.*;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.net.URL;
 
@@ -29,6 +31,28 @@ public class AsmUtilTest {
     public void getFieldsTest() {
         Feeld[] classFields = AsmUtils.getClassFeelds(TestClazz.class.getCanonicalName());
         Assert.assertTrue(null != classFields);
+    }
+
+    @Test
+    public void getClazzInfoTest() {
+        URL resource = ClassUtils.getDefaultClassLoader().getResource("com/sun/enhance/domain/MyMachine.class");
+        Assert.assertTrue(null != resource);
+        File file = new File(resource.getFile());
+        if (file.exists()) {
+            FileInputStream fileInputStream = null;
+            try {
+                fileInputStream = new FileInputStream(file);
+                Clazz clazzStructure = AsmUtils.getClazzStructure(fileInputStream, "com.sun.enhance.domain.MyMachine");
+                System.out.println(clazzStructure.getSuperName());
+                System.out.println(AsmUtils.className2CanonicalName(clazzStructure.getSuperName()));
+                System.out.println(clazzStructure);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (NestedIOException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 
     @Test
@@ -64,7 +88,7 @@ public class AsmUtilTest {
 
                 byte[] bytes = classWriter.toByteArray();
 
-                IOUtils.write(bytes, new FileOutputStream("/Users/hanshou/Downloads/sun-enhance/enhance-common/target/test-classes/com/sun/enhance/domain/" + clazzStructure.getSimpleName() + ".class"));
+                IOUtils.write(bytes, new FileOutputStream("/Users/hanshou/Documents/work/feature/sun-enhance/enhance-common/target/test-classes/com/sun/enhance/domain/" + clazzStructure.getSimpleName() + ".class"));
 
                 TestClazz testClazz = new TestClazz();
             } catch (Exception e) {
@@ -99,8 +123,6 @@ public class AsmUtilTest {
         System.out.println("end");
 
     }
-
-
 
 
 }

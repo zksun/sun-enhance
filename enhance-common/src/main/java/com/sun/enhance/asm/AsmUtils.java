@@ -7,6 +7,7 @@ import com.sun.enhance.util.CollectionUtils;
 import com.sun.enhance.util.StringUtils;
 import org.objectweb.asm.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.ElementType;
@@ -146,7 +147,7 @@ public final class AsmUtils {
     }
 
     static String className2CanonicalName(String name) {
-        return name.replace('/', '.');
+        return name.replace(File.separatorChar, '.');
     }
 
     public static Clazz getClazzStructure(InputStream inputStream, String classCanonicalName) throws NestedIOException {
@@ -228,10 +229,31 @@ public final class AsmUtils {
             return new FieldAnnotationAdapter();
         }
 
+        private synchronized void setAnnotation(Annoteition annotation) {
+            if (null != _self) {
+                _self.addAnnotation(annotation);
+            }
+        }
+
         @Override
         public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-            System.out.println(desc);
-            return super.visitAnnotation(desc, visible);
+            final Annoteition annotation;
+            try {
+                if (null != (annotation = createAnnoteition(desc, visible, ElementType.TYPE))) {
+                    setAnnotation(annotation);
+                }
+            } catch (Exception e) {
+                logger.error("parser annotation error with desc: {} ", desc, e);
+                throw new RuntimeException(e);
+            }
+            return new AbstractAnnotationAdapter() {
+                @Override
+                public void visit(String name, Object value) {
+                    if (!StringUtils.isEmpty(name)) {
+                        annotation.addValue(name, value.toString());
+                    }
+                }
+            };
         }
 
         private Class<?>[] getInterfaces(String[] interfaces) {

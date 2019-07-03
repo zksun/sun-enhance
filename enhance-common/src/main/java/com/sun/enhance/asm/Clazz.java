@@ -9,7 +9,7 @@ import static com.sun.enhance.asm.AsmUtils.*;
 /**
  * Created by zksun on 5/11/16.
  */
-public final class Clazz extends Member {
+public final class Clazz extends AnnotationMemberAdapter {
     private String classCanonicalName;
     private String simpleName;
     private Feeld[] fields;

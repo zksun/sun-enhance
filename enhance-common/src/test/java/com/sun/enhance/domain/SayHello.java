@@ -12,4 +12,8 @@ public class SayHello {
     public void sayHello() {
 
     }
+
+    public void sayHi() {
+
+    }
 }
