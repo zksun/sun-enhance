@@ -2,6 +2,7 @@ package com.sun.enhance.asm;
 
 import com.sun.enhance.domain.SayHello;
 import org.junit.Test;
+import org.objectweb.asm.ClassWriter;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -25,6 +26,12 @@ public class MethodInvokeTest {
         System.out.println("canonicalName is: " + canonicalName);
         System.out.println("simpleName is: " + simpleName);
         System.out.println("sys canonicalName: " + canonicalName.replace('.', File.separatorChar));
+    }
+
+    @Test
+    public void testCreateEmptyClazz() {
+        ClassWriter clsWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+
     }
 
 
