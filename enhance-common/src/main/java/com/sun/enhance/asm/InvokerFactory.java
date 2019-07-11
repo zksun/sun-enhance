@@ -1,5 +1,8 @@
 package com.sun.enhance.asm;
 
+import com.sun.enhance.reflect.ClassScanner;
+import com.sun.enhance.reflect.ClazzComb;
+import com.sun.enhance.reflect.MethodDesc;
 import com.sun.enhance.util.IOUtils;
 import org.objectweb.asm.*;
 
@@ -47,7 +50,7 @@ public class InvokerFactory {
             throw new UnsupportedOperationException("do not support enum type");
         }
 
-        ClassWriter clsWriter = new ClassWriter(0);
+        ClassWriter clsWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         clsWriter.visit(Opcodes.V1_6, Opcodes.ACC_PUBLIC | Opcodes.ACC_SUPER,
                 getClassName(clazz), "java/lang/Object", "java/lang/Object", INTERFACE);
         createInvokeSource(clazz, clsWriter);
@@ -197,29 +200,78 @@ public class InvokerFactory {
                 "invoke", "(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/Object;", null, null);
         mw.visitCode();
 
-        Label l0 = new Label();
-        mw.visitLabel(l0);
-        mw.visitInsn(ACONST_NULL);
-        mw.visitInsn(ARETURN);
+        createPublicMethodsProxy(mw, clazz);
 
-        Label l1 = new Label();
-        mw.visitLabel(l1);
-
-        mw.visitLocalVariable("this", getDesc(clazz), null, l0, l1, 0);
-        mw.visitLocalVariable("methodName", "Ljava/lang/String;", null, l0, l1, 1);
-        mw.visitLocalVariable("params", "[Ljava/lang/Object;", null, l0, l1, 2);
-
-        mw.visitMaxs(1, 3);
+        mw.visitMaxs(1, 1);
         mw.visitEnd();
 
+    }
+
+    private void createMethodInvoke(MethodVisitor mw, MethodDesc methodDesc, Class<?> clazz, boolean frame) {
+        if (frame) {
+            mw.visitFrame(F_SAME, 0, null, 0, null);
+        }
+        mw.visitVarInsn(ALOAD, 1);
+        mw.visitLdcInsn(methodDesc.getMethodName());
+        mw.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "equals", "(Ljava/lang/Object;)Z");
+        Label ifeq = new Label();
+        mw.visitJumpInsn(IFEQ, ifeq);
+
+        Label branch = new Label();
+        mw.visitLabel(branch);
+        mw.visitVarInsn(ALOAD, 0);
+        mw.visitFieldInsn(GETFIELD, getClassName(clazz), "invoker", getDesc(clazz));
+        mw.visitMethodInsn(INVOKEVIRTUAL, getType(clazz)
+                , methodDesc.getMethodName(),
+                Type.getMethodDescriptor(methodDesc.getSource()));
+        if (methodDesc.returnType().equals(Void.TYPE)) {
+            mw.visitInsn(ACONST_NULL);
+        }
+        mw.visitInsn(ARETURN);
+        mw.visitLabel(ifeq);
+
+    }
+
+    private void createPublicMethodsProxy(MethodVisitor mw, Class<?> clazz) {
+        Label start = new Label();
+        mw.visitLabel(start);
+
+
+        ClazzComb clazzDesc = ClassScanner.getInstance().getClazzDesc(clazz);
+        MethodDesc[] methodDescs = clazzDesc.getMethodDescs();
+        if (methodDescs.length > 0) {
+            for (int i = 0; i < methodDescs.length; i++) {
+                MethodDesc methodDesc = methodDescs[i];
+                if (i == 0) {
+                    createMethodInvoke(mw, methodDesc, clazz, false);
+                } else {
+                    createMethodInvoke(mw, methodDesc, clazz, true);
+                }
+            }
+            mw.visitFrame(F_SAME, 0, null, 0, null);
+            mw.visitTypeInsn(NEW, "java/lang/RuntimeException");
+            mw.visitInsn(DUP);
+            mw.visitLdcInsn("no method with this method name");
+            mw.visitMethodInsn(INVOKESPECIAL, "java/lang/RuntimeException", "<init>", "(Ljava/lang/String;)V");
+            mw.visitInsn(ATHROW);
+        } else {
+            mw.visitInsn(ACONST_NULL);
+            mw.visitInsn(ARETURN);
+        }
+
+        Label end = new Label();
+        mw.visitLabel(end);
+        mw.visitLocalVariable("this", getDesc(clazz), null, start, end, 0);
+        mw.visitLocalVariable("methodName", "Ljava/lang/String;", null, start, end, 1);
+        mw.visitLocalVariable("params", "[Ljava/lang/Object;", null, start, end, 2);
     }
 
     public static InvokerFactory getInstance() {
         return instance;
     }
 
-    public static Invoker getInvoker(Class<?> clazz, Object source) {
-        return getInstance().innerGetInvoker(clazz, source);
+    public static Invoker getInvoker(Object source) {
+        return getInstance().innerGetInvoker(source.getClass(), source);
     }
 
 
