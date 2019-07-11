@@ -16,18 +16,19 @@ public class Hello implements Invoker {
         return invoker;
     }
 
-    public void setHelloWorld(HelloWorld helloWorld) {
+    public void setHelloWorld(HelloWorld helloWorld, String hello, String wo, String ti, String ha, String yy, String last) {
         this.invoker = helloWorld;
     }
+
 
     @Override
     public Object invoke(String methodName, Object[] params) {
         if (methodName.equals("getWorld")) {
             return this.invoker.getWorld();
+        } else if (methodName.equals("setHello")) {
+            this.setHelloWorld((HelloWorld) params[0], (String) params[1], (String) params[2], (String) params[3], (String) params[4], (String) params[5], (String) params[6]);
+            return null;
         }
-//        else if (methodName.equals("setHello")) {
-//            this.setHello((String) params[0]);
-//        }
         throw new RuntimeException("no method with this method name");
     }
 

@@ -224,6 +224,9 @@ public class InvokerFactory {
         mw.visitMethodInsn(INVOKEVIRTUAL, getType(clazz)
                 , methodDesc.getMethodName(),
                 Type.getMethodDescriptor(methodDesc.getSource()));
+
+        createMethodParams(mw, methodDesc);
+
         if (methodDesc.returnType().equals(Void.TYPE)) {
             mw.visitInsn(ACONST_NULL);
         }
@@ -232,10 +235,40 @@ public class InvokerFactory {
 
     }
 
+    private void createMethodParams(MethodVisitor mw, MethodDesc methodDesc) {
+        if (!methodDesc.hasParameter()) {
+            return;
+        }
+        mw.visitVarInsn(ALOAD, 0);
+        Class<?>[] classes = methodDesc.parameterTypes();
+        for (int i = 0; i < classes.length; i++) {
+            Class<?> aClass = classes[i];
+            mw.visitVarInsn(ALOAD, 2);
+
+            if (i == 0) {
+                mw.visitInsn(ICONST_0);
+            } else if (i == 1) {
+                mw.visitInsn(ICONST_1);
+            } else if (i == 2) {
+                mw.visitInsn(ICONST_2);
+            } else if (i == 3) {
+                mw.visitInsn(ICONST_3);
+            } else if (i == 4) {
+                mw.visitInsn(ICONST_4);
+            } else if (i == 5) {
+                mw.visitInsn(ICONST_5);
+            } else {
+                mw.visitIntInsn(BIPUSH, i);
+            }
+
+            mw.visitInsn(AALOAD);
+            mw.visitTypeInsn(CHECKCAST, getType(aClass));
+        }
+    }
+
     private void createPublicMethodsProxy(MethodVisitor mw, Class<?> clazz) {
         Label start = new Label();
         mw.visitLabel(start);
-
 
         ClazzComb clazzDesc = ClassScanner.getInstance().getClazzDesc(clazz);
         MethodDesc[] methodDescs = clazzDesc.getMethodDescs();
