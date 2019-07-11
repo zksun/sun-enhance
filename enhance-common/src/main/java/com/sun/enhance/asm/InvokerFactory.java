@@ -221,11 +221,12 @@ public class InvokerFactory {
         mw.visitLabel(branch);
         mw.visitVarInsn(ALOAD, 0);
         mw.visitFieldInsn(GETFIELD, getClassName(clazz), "invoker", getDesc(clazz));
+
+        createMethodParams(mw, methodDesc);
         mw.visitMethodInsn(INVOKEVIRTUAL, getType(clazz)
                 , methodDesc.getMethodName(),
                 Type.getMethodDescriptor(methodDesc.getSource()));
 
-        createMethodParams(mw, methodDesc);
 
         if (methodDesc.returnType().equals(Void.TYPE)) {
             mw.visitInsn(ACONST_NULL);
@@ -239,7 +240,6 @@ public class InvokerFactory {
         if (!methodDesc.hasParameter()) {
             return;
         }
-        mw.visitVarInsn(ALOAD, 0);
         Class<?>[] classes = methodDesc.parameterTypes();
         for (int i = 0; i < classes.length; i++) {
             Class<?> aClass = classes[i];

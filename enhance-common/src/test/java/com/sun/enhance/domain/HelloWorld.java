@@ -9,4 +9,8 @@ public class HelloWorld {
     public String getWorld() {
         return world;
     }
+
+    public void setWorld(String world, String one, String two, String three, String four, String five, String six) {
+        this.world = world;
+    }
 }

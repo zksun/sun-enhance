@@ -26,7 +26,7 @@ public class Hello implements Invoker {
         if (methodName.equals("getWorld")) {
             return this.invoker.getWorld();
         } else if (methodName.equals("setHello")) {
-            this.setHelloWorld((HelloWorld) params[0], (String) params[1], (String) params[2], (String) params[3], (String) params[4], (String) params[5], (String) params[6]);
+            this.invoker.setWorld((String) params[0], (String) params[1], (String) params[2], (String) params[3], (String) params[4], (String) params[5], (String) params[6]);
             return null;
         }
         throw new RuntimeException("no method with this method name");
